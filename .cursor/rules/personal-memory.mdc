@@ -1,0 +1,28 @@
+---
+description: Read the local memory folder before starting code work in this repo
+alwaysApply: true
+---
+
+# Memory
+
+Before starting any code task in rw-bess, before reading or editing source
+files, read everything in:
+
+```
+~/.claude/memory/rw-bess
+```
+
+This path is the same for every rw-bess clone: `Documents/GitHub/rw-bess`,
+`Projects/rw-bess`, and the per-ticket clones beside it.
+
+Read every `.md` file directly in that folder. Do not sample or skim. Start
+with `MEMORY.md`, the index. It holds durable context for this repo:
+conventions, file locations, hardware and protocol details, and prior
+decisions. Treat it as authoritative over assumptions inferred from the code.
+
+Skip `archive/`. Those notes are superseded by these rule files or belong to
+closed tickets. Read one only when the task names it.
+
+If the folder is empty or missing, proceed normally.
+
+Do not write to the memory folder unless explicitly asked.

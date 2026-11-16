@@ -1,0 +1,85 @@
+{
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(find:*)",
+      "Bash(git log:*)",
+      "Bash(git config --local --list)",
+      "Bash(git remote get-url origin)",
+      "Bash(git describe:*)",
+      "Bash(git clone:*)",
+      "Bash(git fetch:*)",
+      "Bash(python3:*)",
+      "Bash(python3 -c:*)",
+      "Bash(uv run:*)",
+      "Bash(gh repo:*)",
+      "Bash(gh api:*)",
+      "Bash(gh run:*)",
+      "Bash(gh release:*)",
+      "WebSearch",
+      "WebFetch(domain:stackoverflow.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:www.reddit.com)",
+      "mcp__claude_ai_Atlassian__getAccessibleAtlassianResources",
+      "mcp__claude_ai_Atlassian__getJiraIssue",
+      "mcp__claude_ai_Atlassian__editJiraIssue",
+      "mcp__claude_ai_Atlassian__getConfluencePage",
+      "mcp__claude_ai_Atlassian__searchConfluenceUsingCql",
+      "mcp__claude_ai_Atlassian__search",
+      "mcp__claude_ai_Atlassian__fetch"
+    ],
+    "additionalDirectories": [
+      "/Users/spencer.green/Documents/GitHub/rw-bess",
+      "/Users/spencer.green/Projects/rw-bess",
+      "/Users/spencer.green/.claude/memory/rw-bess",
+      "/Users/spencer.green/.claude",
+      "/Users/spencer.green/.cursor/rules",
+      "/Users/spencer.green/.cursor/skills"
+    ]
+  },
+  "model": "opus[1m]",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/cursor_shell_hook.py\" \"$HOME/.cursor/hooks/no-ai-attribution.py\" --fail-closed",
+            "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/cursor_shell_hook.py\" \"$HOME/.cursor/hooks/git-text-style.py\"",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.claude/sync-cursor-rules.sh\""
+          }
+        ]
+      }
+    ]
+  },
+  "effortLevel": "high",
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "high"
+    }
+  },
+  "autoUpdatesChannel": "latest",
+  "tui": "fullscreen",
+  "theme": "dark",
+  "switchModelsOnFlag": false
+}

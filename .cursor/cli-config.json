@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "editor": {
+    "vimMode": false
+  },
+  "permissions": {
+    "allow": [
+      "Shell(*)",
+      "Read(**)",
+      "Write(**)",
+      "WebFetch(*)",
+      "Mcp(*:*)"
+    ],
+    "deny": []
+  },
+  "approvalMode": "unrestricted",
+  "sandbox": {
+    "mode": "disabled",
+    "networkAccess": "allow_all"
+  },
+  "attribution": {
+    "attributeCommitsToAgent": false,
+    "attributePRsToAgent": false
+  }
+}

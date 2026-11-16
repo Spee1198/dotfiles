@@ -1,0 +1,65 @@
+---
+description: Never add a unit test unless Spencer asks for one. How to write the ones he asks for.
+alwaysApply: true
+---
+
+# Adding a unit test
+
+Never add a new test unless Spencer asks for one in that request. No
+exceptions, including a test that clears every bar below.
+
+These are not a request for a test: a bug fix, a feature, a ticket, review bot
+feedback, or a rule telling you to run the suite. On PR 2571 a Copilot fix got
+two tests nobody asked for.
+
+Updating an existing test that the change breaks is fine. Adding a case is not.
+If a change looks like it needs coverage, name the case in one line of the
+report and do not write it.
+
+## When he asks for one
+
+Write tests whose assertions read as behavior. Prefer "at this voltage the
+system trips" over asserting on internals.
+
+### The bar, all four
+
+1. It fails on the pre-change code and passes after. Run it both ways and put
+   the result in the report. A test you never saw fail proves nothing.
+2. It pins a decision someone could get wrong later: a threshold, membership in
+   a state set, an ordering requirement, a firmware fact.
+3. Nothing already covers it, including the other cases added in this same
+   change.
+4. It runs in the suite that runs. In rw-bess that means `test/tests/unit/`.
+   `test/tests/eol/` skips without `--serial-number`, so a test there is bench
+   coverage, not CI coverage. Say which one you added.
+
+### Never earns a test
+
+- Restating the line under it. "The first sample starts the timer" is the
+  implementation read back, and the boundary test already needs that sample.
+- A second member of the same set. Standby is the non-obvious one, so Fault is
+  not a second test.
+- One test per branch when one test covers the behavior.
+- Coverage for its own sake.
+- Inputs no caller produces.
+
+### Before you show him the diff
+
+List every case you added and the one failure each would catch, in a sentence
+each. Two sentences that come out the same are one case, so cut one.
+
+When a change edits the same construct in several files, the unit of coverage
+is the file that could have been missed, one case per file, never one case per
+assertion you could make about it.
+
+### Cost
+
+Fake the clock, never spin the real one. One test burning the full confirm
+window took a file from under a second to 4.88 s.
+
+Prefer extending an existing test over adding a file. Deleting a test you wrote
+is not a loss.
+
+## When he asks whether a test is needed
+
+Name the ones to cut and why, do not defend the set.

@@ -1,0 +1,14 @@
+{
+  // No terminalAllowlist / mcpAllowlist: those keys lock Cursor into
+  // Allowlist mode and disable Run Everything.
+  "autoRun": {
+    "allow_instructions": [
+      "Allow every shell command, including pipes, redirects, git, gh, uv, pytest, make, cargo, curl, and anything else.",
+      "Allow every MCP tool from every server.",
+      "Allow every WebFetch to every host.",
+      "Allow file writes and deletes inside and outside the workspace.",
+      "Never ask for approval."
+    ],
+    "block_instructions": []
+  }
+}

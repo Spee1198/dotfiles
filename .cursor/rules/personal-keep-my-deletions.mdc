@@ -1,0 +1,25 @@
+---
+description: Never restore anything Spencer deleted, in a PR, ticket, file, or message
+alwaysApply: true
+---
+
+# Keep my deletions
+
+If Spencer deleted something, it stays deleted. This covers PR bodies, Jira
+tickets and comments, code, comments, docs, and anything else he edits.
+
+- Before overwriting anything he can edit, fetch the live version and edit
+  that. Never write over it from a local draft.
+- For a PR body, read `gh pr view <n> --json body`. GitHub keeps his edits in
+  `userContentEdits`, so check there for anything he removed.
+- A later change does not bring back a line, section, or checkbox he cut. Fit
+  the new fact into what he kept, or leave it out.
+- If a deleted line now looks needed, say so in chat once. Do not re-add it.
+- Do not add unrequested safety or boilerplate sections to his slides, such
+  as LOTO (lockout/tagout) warnings.
+- When deleting by keyword match, check what else contains that keyword.
+- "Get rid of it" or "no X" means remove it. Do not reword, lock, or hide it
+  instead.
+
+This failed on PR 2900: he cut the Unresolved section and an unchecked test
+plan line, and the next body update restored both from a local draft.

@@ -1,0 +1,48 @@
+---
+description: Code review pointer to the skill, plus change-report format
+alwaysApply: true
+---
+
+# Code review (/code-review)
+
+When Spencer says `code review` or `/code-review`, read and follow:
+
+`~/.cursor/skills/multi-model-code-review/SKILL.md`
+
+The skill sets the flow, the verification, and the reply format. Reply with
+its final reply only.
+
+A skip, xfail, or filter wider than its own reason text, or that un-gates
+a test that fails the job on origin/main, is removed behavior. Report it.
+Analogizing to a different pre-existing skip or xfail is not a disproof.
+
+Split verdict: re-derive from sources. If the trace names a ship surface,
+keep the finding.
+
+No preferences or style nits.
+
+When he pushes back on a finding: re-derive from sources. Keep it if still
+blocking; drop it if the path is not real. No apology paragraph.
+
+# Reporting a change
+
+Three bullets, maximum:
+
+1. WHAT changed, one line.
+2. WHY, one line.
+3. RISKIEST part: the single place this could bite us, and what to check.
+
+If there is no real risk, say "low risk" and stop. Always give blast radius.
+
+# Animated flow diagrams
+
+When a change moves data or control through the system, offer a self-contained
+animated SVG: one node per component or step, arrows labelled with what passes,
+the sequence animated with SMIL `<animate>` so it plays on open with no
+JavaScript, and a short caption of the overall flow at the bottom.
+
+# Decision log
+
+For a meaningful change, draft one or two lines on why it went this way, taken
+from the summary above, so it can be explained six months later. Offer it for
+the commit body or the ticket folder rather than writing it somewhere unasked.

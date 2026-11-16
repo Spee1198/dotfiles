@@ -1,0 +1,15 @@
+---
+description: Log every correction Spencer makes to the dotfiles worker inbox.
+alwaysApply: true
+---
+
+# Feedback inbox
+
+When Spencer corrects you, rejects a change, or a rule failed to stop a
+mistake, append one line to `~/.local/share/dotfiles-worker/inbox.md` before
+continuing:
+
+`- 2026-10-20 | rw-bess | personal-unit-tests | added two tests nobody asked for`
+
+Date, repo, the rule or skill that should have caught it (or `new`), what
+happened. Never edit rules from a working session. The worker does that.

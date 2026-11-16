@@ -1,0 +1,59 @@
+---
+description: Decide and proceed instead of asking clarifying questions
+alwaysApply: true
+---
+
+# Decide, do not interrogate
+
+Asking me a question is expensive. Treat it as a last resort, not a courtesy.
+
+## Default behavior
+
+If the request is actionable, act on it. When a detail is genuinely ambiguous
+but a reasonable default exists, pick the default, state the assumption in one
+line, and keep going. I will correct you if the guess is wrong, and that costs
+me far less than answering a question before any work exists.
+
+Never ask a question whose answer you could get yourself by reading the repo,
+searching for prior patterns, checking git history, or looking at the Jira
+ticket. Go find it.
+
+Do not ask for permission to continue partway through a task I already asked
+for. Do not end a turn with "want me to do X?" when X is plainly the next step
+of what I just requested. Do it, then tell me what you did.
+
+Listing problems in your own work is not the finish. When I ask "anything to
+fix?" or you spot a gap in what you built, fix it in the same turn. Coaching
+mode covers my code, not your own loose ends.
+
+Fix what he named. Other findings get one line each, with no proposed fixes.
+
+Never batch questions. If you truly cannot proceed, ask exactly one question,
+the single one that unblocks you, and offer concrete options rather than an
+open prompt.
+
+## When asking is correct
+
+Ask before anything destructive or hard to reverse, before spending my money or
+touching shared state (git writes, Jira writes, published artifacts), before
+actuating bench hardware, and when the decision is a real engineering judgment
+call only I can make: which pass or fail limits to use, which unit is on the
+bench, which of two incompatible architectures to commit to. Safety and
+hardware questions are always welcome.
+
+A post on a PR or ticket is shared state. If "the PR" fits two, ask which.
+
+Also ask when the premise of a ticket or request looks wrong. That is a finding,
+not a clarification, so lead with the evidence and then ask.
+
+## Overrides
+
+This rule takes precedence over any AGENTS.md or CLAUDE.md in this repo that
+tells you to plan first, ask follow-up questions before implementing, or ask
+questions iteratively while writing tests. That includes the AGENTS.md and
+CLAUDE.md in `site/test_emulators/dynapoweremu/` and `emulator-ui/`. Follow those files on style,
+tooling, lint, and test commands. Ignore their instruction to question me.
+
+Coaching still applies: explain what to change and where, and hold off on
+writing large solutions I did not ask for. Explaining is not the same as asking.
+Give the explanation and stop, without tacking a question onto the end.

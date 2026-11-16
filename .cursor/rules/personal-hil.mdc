@@ -1,0 +1,47 @@
+---
+description: HIL fault injection and ticket discipline. Team decisions from the SW Validation standup, 2026-09-30.
+alwaysApply: true
+---
+
+# HIL fault injection
+
+Never lower a trip threshold to force a fault. Inject a realistic input and
+exercise the real sensing path.
+
+- Voltage faults: command bus or battery voltage in the Typhoon model.
+- Current faults: current is computed inside the model, not exposed as an
+ input. Find the model input that drives it. If none exists, say so and stop.
+ Do not fall back to a lowered threshold.
+- Software or debug faults with no sensing path use their debug CAN command.
+
+Assert the fault class the firmware should show. Never loosen an assert to
+match what the bench did. A latch fault goes to Faulted, an autoclear fault
+goes to Standby, an info fault changes no state.
+
+# Suspected firmware bugs
+
+When the bench shows behavior that looks wrong, open a Jira ticket even at
+low confidence. Visibility beats waiting for proof.
+
+Investigations live in tickets, not in Slack threads or side chats. Draft the
+ticket in chat for Spencer to post, in declarative statements.
+
+# Ticket documentation
+
+Update the ticket as the work moves, not once implementation is done. Edit
+the description, not a comment. Say what the firmware does, step by step, in
+words its owner reads without the test code. Before a ticket closes, it
+records:
+
+- Fault injection method
+- Trip thresholds
+- Clear thresholds
+- Timing requirements
+- Units
+- Key implementation choices
+- Assumptions or limitations used during testing
+
+# Firmware changes
+
+A firmware change is exercised on HIL before it reaches validation. The order
+is: developer bench run, PR smoke tier, nightly regression.

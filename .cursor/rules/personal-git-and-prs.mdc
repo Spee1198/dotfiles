@@ -1,0 +1,199 @@
+---
+description: Commits, PRs, and anything posted under Spencer's name: branch, authorship, voice, length
+alwaysApply: true
+---
+
+# Committing in this repo
+
+Standing grant from Spencer on 2026-08-06: commit without asking each time.
+This replaces the older default of drafting a message and stopping. Pushing and
+opening PRs are not included, so do those only when he says to.
+
+Three conditions, all mandatory.
+
+## 1. Right branch
+
+Check `git rev-parse --abbrev-ref HEAD` before every commit. Branches are named
+for their ticket, for example `spencer/BESS-2505-stack-light`, and a branch holds
+that one ticket's work only.
+
+Never commit to `main`. If the branch does not match the work you just did,
+stop and say so rather than committing anyway. If the change spans two tickets,
+stop and let him pick the branch.
+
+Cut every ticket branch from `main`. Never stack one on an open PR branch.
+"Merge main" into a PR whose base is not `main` means merge its base. Check
+`gh pr view --json baseRefName` first. On PR 3228 main added 17 stray commits.
+
+Never switch the branch of a checkout another agent may be using. Cut the new
+ticket branch in its own worktree.
+
+Stage deliberately by path. Never use `git add -A` or `git add .` in this repo:
+the tree carries a lot of untracked noise (`__pycache__`, `test/.venv`,
+`.pytest_cache`) that must not land in a commit. Commit only files that belong
+to the current ticket.
+
+The `rw-test-infrastructure` submodule is its own repo and its own PR, merged
+before the pointer bump. Do not bundle a submodule change into a parent commit.
+
+A pin bump is the pointer change only. Run no driver or combiner suites and
+keep the PR tiny unless he asks.
+
+Never merge while any check is pending, required or not.
+
+## 2. Never co-authored, never attributed
+
+Never add a `Co-Authored-By` trailer to anything, for any reason. The repo
+history has zero of them and it stays that way. Spencer is the sole author on
+the record.
+
+Nothing in a commit, PR title, or PR body may mention AI, Claude, Cursor, an
+assistant, or being generated. No "Generated with" footer, no robot emoji, no
+tool attribution anywhere in the
+subject, body, or trailers.
+
+After committing, verify with `git log -1 --format="%an <%ae>%n%b"` and confirm
+the author is Spencer and no trailer or attribution slipped in.
+
+## 3. Message reads like Spencer wrote it
+
+Commit subject and PR title share one shape: `prefix: summary`, matching CI's
+regex `^(?=.{1,75}$).+: \w.+$` from `.github/pr-title-checker-config.json`.
+Lowercase area prefix (`eol:`, `hil:`, `site:`, `docs:`, `pacman:`), one space,
+then a word character. Hard maximum 75 characters including the prefix. Count
+them, do not eyeball it. No ticket designator in the summary.
+
+Squash-merge takes the final commit summary from the PR title, so the PR title
+has to pass the same check even when the branch commit is already right.
+
+His own commits are the model for voice:
+
+```
+eol: settle cal power points on convergence, not a fixed dwell
+eol: carry the GUI's readable test names into MES rows
+```
+
+Plain and specific, says what changed and often why, lowercase, no filler, none
+of the padding words in `personal-writing-style.mdc`. Do not restate the diff as
+a bullet list. Add a body only when there is a real reason worth recording, and
+write it in full sentences. The whole message, subject included, is 50 words at
+most. Count them.
+
+## One commit, never force push
+
+Hold work uncommitted until the task is done, run lint and tests, then make one
+commit. No commit per sub-change.
+
+Never force push: not `--force`, not `--force-with-lease`, not on his own
+branch. Work on an already-pushed branch goes on as a new commit; squash-merge
+collapses it anyway. Push only when he says to, as a fast-forward. If a push is
+rejected as non-fast-forward, stop and tell him. "Fix it" on an open PR's
+review comment means commit and push.
+
+On PR 2386 an amended, force-pushed commit left GitHub's PR pointing at the old
+SHA for over ten minutes. A merge in that window would have taken the wrong
+commit.
+
+# PR bodies
+
+Flat statements of fact in his voice. A reviewer should learn what changed, at
+which addresses and files, and what is still unverified. Nothing else.
+
+Order: what the PR adds, the decisions worth recording, `## Test plan`, then the
+ticket key and its Jira URL on the last two lines. Nothing else follows the test
+plan. Hard wrap at 80 columns.
+
+Open with what the PR adds. Never frame it as a missing test or a regression
+that would go unseen.
+
+Open every PR with `gh pr create --draft`. He decides when it is ready for
+review. Do not re-draft or otherwise change a PR that is already open.
+"Make the PR" is the go to push and open the draft. Raise a concern in the
+same reply. Do not hold the PR or ask for a second go.
+
+Name real things: register addresses, file paths, function names, counts. "Six
+staging words at 42043, then Update Time at 42042" over "the required write
+sequence".
+
+Never link, cite, or mention another PR in the body, by URL or by number.
+That includes stacked PRs: GitHub already shows the base branch. Write `#N`
+only for a PR, since GitHub links it. A CI run is "run 85", not "#85".
+
+## Length
+
+Short. A reviewer should finish it in under a minute.
+
+Hard budget for the whole body: 200 words. Count it before posting, do not
+eyeball it. `gh pr view <n> --json body --jq '.body' | wc -w` after posting, or
+`wc -w` on the file before. Over budget means cut a section, not rewrap the
+lines. A body you touch gets cut to budget, even if it was over before.
+
+Inside that budget:
+
+- What the PR adds: three or four lines, naming the file.
+- Decisions: at most four bullets, one line each, and only for a choice a
+  reviewer would otherwise question. A decision needing two lines belongs in
+  the commit body instead.
+- Test plan: one line per item, evidence in the clause, never a sub-paragraph.
+
+Skip the investigation, the theories that did not pan out, and any explanation
+of how the system works that the reviewer already knows.
+
+If a paragraph is not changing whether someone approves the PR, cut it.
+
+## Cut every flourish
+
+No rhetoric, no persuasion, no narrating your own work, no closing line that
+restates the paragraph above it. If a sentence exists to make the change sound
+considered, delete it.
+
+```
+❌ Commissioning is where every unit already gets touched, so this is the
+   place to fix it.
+❌ **Worth a look**: the commit is queued unconditionally.
+❌ - [ ] Real inverter. The only step that counts.
+✅ The commit is queued unconditionally behind the staging write, where the
+   PyQt tool gates it on the staging write succeeding.
+✅ - [ ] Real inverter
+```
+
+## Test plan and honesty
+
+`- [x]` only for what you ran, with the command and the result: "`make lint` and
+`make test` in `dynapoweremu`: clean, 278 pass". `- [ ]` for what you did not,
+named plainly and left unexplained. Pre-existing lint or CI noise gets one clause
+saying it predates the branch and was left alone. Leave out a run you already
+told him was not needed.
+
+State an unverified thing as a fact and stop. "Whether each stack's event log
+stamps off the Domain clock is unresolved" is finished. Do not build a paragraph
+around it or apologize for it.
+
+# PR comments
+
+Plain text in his voice, a few sentences. No headers or bold. One line per
+paragraph so GitHub flows it; the 80 column wrap is for bodies only. Never
+reply to Copilot review threads.
+
+# Jira and anything else under his name
+
+The same budget discipline applies to Jira comments and ticket descriptions:
+the facts, then stop.
+
+Declarative statements only. A question in his voice reads as Spencer asking
+his team something he never asked. Turn an open item into a status line: "Not
+merging until the MES API accepts the field", not "Can someone confirm?". Do not
+address teammates by name with requests. Raise open questions with Spencer in
+chat.
+
+- Findings go in the ticket description, not a comment.
+- Link every ticket, PR, CI run, and attachment you name.
+- Attach a long list, like affected serials, as a file. Do not paste it.
+- No planning labels such as "Gap 1 (week 1)" in a summary.
+- A link edits both tickets. Touch only the tickets he named or reported.
+- An unneeded ticket gets deleted, not closed as Won't Do.
+- A new ticket is a Sub-task under its story, never a Story or Task on the
+  epic.
+  Pick the story by the area the change touches, such as PacMan EOL or
+  Gateway EOL, not the ticket the conversation started from.
+- Fix a misfiled ticket by moving it. Never file a replacement.

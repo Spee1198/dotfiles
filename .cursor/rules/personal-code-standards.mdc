@@ -1,0 +1,180 @@
+---
+description: How to write code here: simplicity first, match what already exists
+alwaysApply: true
+---
+
+# Writing code
+
+- Prefer functions over classes unless there is state to hold.
+- No abstraction for a single caller. Inline it until there are two or more uses.
+- Match existing patterns in the file and the repo over inventing new ones. For
+  EOL work that means mirroring `test/tests/eol/test_dcdc_current_cal.py` and
+  `test_dcdc_power.py`, with limits in `test/eol/constants.py`. Combiner EOL
+  mirrors PacMan EOL: check how PacMan does it before designing.
+- Handle the failure paths, not just the happy path.
+- Do not reinvent the standard library or an existing repo utility. Search first.
+- Before adding a dependency or install step, check how the sibling package
+  ships it. Combiner setup mirrors PacMan.
+- No speculative generality. Keep it as simple as the problem allows.
+- Keep control flow under roughly McCabe 10. If a function needs a comment to
+  explain its own branching, split it.
+
+## General practices
+
+- Every wait has a timeout. Never loop forever on a state or a response.
+- Fail to the safe state. On any error, leave outputs off, faults released,
+  and the bench idle, with cleanup in a `finally`.
+- Single source of truth. A copied value names where the original lives.
+- A function either reads state or changes it, never both.
+- Setup and cleanup are safe to run twice, so a retry does not stack effects.
+- A test passes on a clean checkout. Never lean on built images, git tags, or
+  other untracked local state that CI lacks.
+- Never swallow an error. Handle it, or log it and re-raise. No silent
+  `except: pass`.
+- Names say what a thing is, with its unit: `is_ready`, `has_fault`,
+  `timeout_s`. A boolean reads as a yes or no question. No clipped names like
+  `w`, `s`, or `over`.
+- One function, one job. If its description needs "and", split it.
+- Validate inputs once at the edge (CLI arguments, config, CAN decodes),
+  then trust them inside.
+- Leave touched code cleaner than you found it. Never edit unrelated code to
+  do it.
+- Never log, print, or show a secret. Scrub keys from echoed bodies and errors.
+- Flag anything that lets an operator skip a check, such as MES, before
+  building it.
+- Add only the output he asked for. No extra banner, row, or line in a report,
+  UI, or mock.
+
+## Style
+
+- Pass booleans by keyword: `asserted=True`, never a bare `True`.
+- No attribute names built from strings. `getattr(conv, f"{side}_faults")`
+  hides from search and breaks on rename. Put a callable in the row instead.
+- Rows are `@dataclass(frozen=True)`. Not `NamedTuple`, dicts, or bare tuples.
+- Return early. Handle the skip or error case first, then the main path flat.
+- Catch the exception you expect. A broad `except Exception` belongs only in
+  cleanup, and it logs with `logger.exception`.
+- Keep pure logic apart from bench I/O so it unit-tests without hardware, like
+  `test/hil/run_summary.py`.
+
+## No hardcoded values
+
+Spencer does not want literal values buried in logic, asserts, or log text.
+Treat it like PLC tags: a value someone might tune goes in a named constant
+at the top. A fixed fact nobody tunes, like an API page maximum, stays inline.
+
+- Read a value from its source when the repo already parses it. Fault type
+  comes from the DBC via `build_fault_type_map()` in
+  `rw-test-infrastructure/rw_test_infra/devices/PacMan/converter.py`, not
+  from a copied "autoclear" string.
+- Otherwise give it one named constant: in `test/eol/constants.py` for EOL
+  limits, at the top of the module for anything else. Put the source next to
+  it, such as `OT_* in pack_config.h`.
+- Settings count too: IPs, ports, URLs, channels, paths, versions, and bench
+  or config names.
+- Timeouts, poll intervals, sleeps, retries, and margins count too. Define
+  `_TIMEOUT_S = 5.0` first, then pass `timeout_s=_TIMEOUT_S`. Never
+  `timeout=5000` or `time.sleep(0.5)` inline.
+- Derive a value from named constants only, for example
+  `_OT_SET_C + _INJECT_MARGIN_C`. Neither `60.0` nor `_OT_SET_C + 5.0`.
+- A name, message, or signal used in more than one place is a constant or a
+  row field, never a repeated string.
+- Text formatting is exempt: a truncation length, a short SHA slice, or `- 3`
+  for an ellipsis can stay inline.
+
+## Tests that touch hardware
+
+- Before looping over converters, check what each role does on every model
+  the test runs on. LF followers are batteryless and never reach pack Ready.
+- Random case selection must be reproducible: log the seed or take it from a
+  pytest option, so a failing case can be rerun by name.
+
+## Write the first case as a row
+
+When a ticket is one of a family, such as one fault, one cell, or one
+sensor per ticket, write the first case as a row in a table from the start.
+Put the fault name, message, limit, and side in the row. Keep them out of
+the helper and the assert text, then parametrize the test over the table.
+This is not speculative generality: the next tickets in the family exist.
+
+The check is the next ticket's diff. Adding the second fault should add one
+row and nothing else. On BESS-3324, f086 was hardcoded into the helper,
+asserts, and logs, so adding f040 rewrote 30 lines of a file that had already
+been reviewed.
+
+A difference between rows, like skipping batteryless followers on the pack
+side, goes in a row field. Never branch on a row's name.
+
+# Comments and docstrings are short
+
+A comment states what the code cannot: a limit, an ordering requirement, a
+server behavior that bites. Reasoning that gets cut goes in the commit body or
+the PR.
+
+1. One line by default, one or two short sentences, never a paragraph. A
+   summary line plus at most two more, and only when the
+   constraint needs them. If it still does not fit, it is not
+   comment material.
+2. A docstring says what the function does, never the history behind it.
+3. Do not narrate reasoning, alternatives considered, or where a fact came from.
+4. One sentence per line, under about fifteen words.
+5. Never carry a sentence across a line break to make it fit. Say the shorter
+   thing.
+6. No blank line inside a docstring. Cut the second paragraph or move it to
+   the commit body.
+7. State a fact once. If it sits next to the constant, it does not also go in
+   the docstring and at the call site.
+8. At most one comment per function you touch, unless a second states a
+   distinct constraint.
+9. Comment lines in a hunk stay well under its code lines. If a five-line
+   change carries four lines of comment, cut, do not rewrap.
+10. Read your own diff back before committing. Delete any line that only
+    restates the code under it.
+11. No banner comments: a row of dashes framing a section title. Other files
+    having them is not a licence to add more.
+12. Test docstrings: one line naming the behavior.
+13. No em dashes or `--`: see `personal-writing-style.mdc`.
+14. The budget covers every line a reviewer opens in the files-changed view,
+    including comments from earlier sessions. Trim those in the same pass
+    instead of calling them pre-existing. A comment you re-indent or move is
+    yours. Pre-existing means on `origin/main`,
+    and even then rewrite it if you are already editing that block. On PR #2024
+    that bloat shipped because it was read as somebody else's code.
+
+```
+❌ # MES names the unmet precondition in the body. Dropping it was why a
+   # refusal on the floor could only be guessed at.
+✅ # MES names the unmet precondition in the body.
+```
+
+```
+❌ """Attach an alert payload logger to PacMan's CAN notifier.
+
+    Uses the existing notifier rather than a second capture socket. The
+    firmware-update teardown preserves external listeners and re-attaches them
+    to the new notifier, so the logger survives an in-test reflash.
+
+    Returns an idempotent ``stop()`` that detaches the listener and logs
+    per-fault totals.
+    """
+✅ """Attach an alert payload logger to PacMan's CAN notifier.
+    Returns an idempotent stop() that detaches it and logs totals.
+    """
+```
+
+# Let the tools find the objective problems
+
+Formatting, import order, unused imports, naming, and dead code are the linters'
+job. Do not hand-review them, and do not report them as findings. Run the tools
+before claiming a change is done:
+
+- Python, when the package has a Makefile: `make lint` and `make test`. The
+  `AGENTS.md` files under `site/test_emulators/` require this and forbid calling
+  pytest or ruff directly there.
+- Python, otherwise: `uv run ruff format --check`, then `uv run ruff check`, plus
+  whatever type checker the package configures (pyright or mypy).
+- Rust: `cargo fmt`, `cargo test`, and
+  `cargo clippy --all-targets -- -D warnings`.
+
+Report a lint finding that predates the change as pre-existing. Do not fix it
+inside an unrelated diff.

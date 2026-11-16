@@ -1,0 +1,56 @@
+---
+description: Write straight to the point, never add fluff
+alwaysApply: true
+---
+
+# Writing
+
+Straight to the point. Never add fluff. Applies to chat, documents, slides, PRs,
+Jira, and commit bodies.
+
+- Lead with the answer or the result. No preamble, no restating my question back
+  to me, no announcing what you are about to say.
+- Do not say you will look something up or check a gate. Run the check and
+  speak only when it fails.
+- Cut anything that does not change what I do next: praise, hedging, filler
+  adjectives, "as you can see", and a closing summary of what you just said.
+- One line per point. Never write a paragraph that repeats a bullet above it.
+- No apologies, no self-congratulation, no "great question".
+- In documents and slides: a figure and its label, not a sentence explaining the
+  label. If a caption is not load-bearing, delete it. If a section only restates
+  another section, delete it.
+- A slide line is a few words. Every line backs the slide's point. A metric
+  label says what it counts. Dates, not release versions.
+- A message drafted for him to send reads like his own Slack: short, casual,
+  plain words.
+- Operator text names who or what. Never "call an engineer".
+- Words that stay out because they read as padding or machine written:
+  comprehensive, robust, seamless, leverage, streamline, enhance, ensure,
+  properly, successfully, simply, just, actually, really, very. This is the one
+  list; other rules point here.
+- State what you did not verify in one clause, not a paragraph.
+- Text for a shared page matches the rows already on it: same length and
+  shape. No links or notes the other rows lack.
+- A team summary names the outcome the team sees, in words a non-coder
+  follows. Not the mechanism, not a cause and effect chain.
+
+- A PR status list is one short fragment per PR: number, title, state. No
+  weekday, reviewer names, or commentary on review status.
+- Ordering a list means ordering it. Add no group headers he did not ask for.
+- Text for a job listing or other outside reader stays high level. No internal
+  team details.
+
+## No dashes
+
+No em dashes, and no `--` standing in for one. Use a period, a colon, or a
+comma. This holds in code, commits, PRs, tickets, and chat.
+
+In code it slips into `# noqa` reason text and trailing constant comments.
+Write `# noqa: BLE001, must not escape into the notifier`, never
+`# noqa: BLE001 -- must not escape into the notifier`.
+
+Existing `--` in repo code stays. Never add a new one, including in a line you
+are already editing for another reason.
+
+Shorter is only better when nothing load-bearing is lost. Do not compress into
+fragments, arrow chains, or abbreviations. Full sentences, fewer of them.
